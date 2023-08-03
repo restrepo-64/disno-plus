@@ -1,0 +1,39 @@
+html {
+    scroll-behavior: smooth;
+}
+
+* {   /* The '*' means 'all' so this will apply to everything; border-box is so it doesn't do any funny stuff */
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #040714;
+    color: #f9f9f9;
+
+    font-family: Avenir-Roman, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    color: #f9f9f9;
+    text-decoration: none; 
+}
+
+@media only screen and (min-width: 768px) {   /* For large desktop and up size  */
+    body {
+        font-size: 16 px;;
+    }
+}
+
+@media only screen and (min-width: 480px) and (max-width: 768px) {   /* For small desktop or tablet and up size  */
+    body {
+        font-size: 15px;
+    }
+}
+
+@media only screen and (max-width: 479px) {   /* For very small devices like phone and smaller */
+    body {
+        font-size: 14px;
+    }
+}
