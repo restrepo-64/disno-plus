@@ -1,9 +1,76 @@
-import styled from 'styled-components'
+import { useEffect } from 'react';
+import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { auth, provider } from '../firebase';
+import { selectUserName, selectUserEmail, selectUserPhoto, setUserLoginDetails, setSignOutState } from '../features/user/userSlice';
+
+
+//dispatch allows us to send info to our store.js, selector will allow us to retrieve info from our store.js
 
 const Header = (props) => {
+
+        const dispatch = useDispatch();
+        const history = useNavigate(); //old vs new react. useHistory is now useNavigate
+        const username = useSelector(selectUserName);
+        // const userEmail = useSelector(selectUserEmail);
+        const userPhoto = useSelector(selectUserPhoto);
+
+        useEffect(() => {
+            auth.onAuthStateChanged(async (user) => {
+                if(user) {
+                    setUser(user);
+                    history('/Home');
+                    //if the user is logged in, bring them to the home page
+                }
+            });
+        }
+           ,[username]
+        );
+
+    const handleAuth = () => {
+        if(!username) {
+        auth.signInWithPopup(provider).then((result) => {
+            setUser(result.user);
+
+        }).catch((error) => {
+            alert(error.message);
+        });
+         }
+         else if (username) {
+            auth.signOut().then( () => {
+                dispatch(setSignOutState());
+                history('/');
+            })
+            .catch((err) => alert(err.message));
+         }
+    };
+
+    const setUser = (user) => {
+        dispatch(setUserLoginDetails({
+            name: user.displayName,
+            email: user.email,
+            photo: user.photoURL,
+            //these user. names are from the inspector on dev tools if you inspect the webpage. the information comes from login info from firebase, it gets inserted into the inpsection window and we access it from there
+            //from firebase to redux to here
+        }));
+    };
+
+
     return <Nav>
             <Logo><img src="/images/logo.svg" alt="Disney+" />
             </Logo>
+
+                {   //this is called a fragment <></>
+                    //what this ternary statement does is if the user is
+                    //not signed in, show login button, if not, show photo
+                    !username ?
+                    <Login onClick={handleAuth}>Login</Login>
+                    :
+                    <> 
+                     
+                
+
             <NavMenu>
                 <a href='/home'>
                     <img src="/images/home-icon.svg" alt="HOME"/>
@@ -29,8 +96,17 @@ const Header = (props) => {
                     <img src="/images/series-icon.svg" alt="SERIES" />
                     <span>SERIES</span>
                 </a>
-                </NavMenu>
-                <Login>Login</Login>
+                </NavMenu> 
+                <SignOut>
+                <UserImg src={userPhoto} alt={username} />
+                <DropDown>
+                    <span onClick={handleAuth}>Sign out</span>
+                </DropDown>
+                </SignOut>
+                 </> 
+                
+                }
+                
         </Nav>;
 }
 
@@ -149,6 +225,53 @@ const Login = styled.a`
     }
 `
 
+const UserImg = styled.img`
+   
+   height: 100%;
+   
+   /*border-radius: 50%;
+    padding: 1.5;
+    */
+`
+
+const DropDown = styled.div`
+    position: absolute;
+    top: 48px;
+    right: 0px;
+    background: rgb(19, 19, 19);
+    border: 1px solid rgba(151, 151, 151, 0.34);
+    border-radius: 4px;
+    letter-spacing: 3px;
+    box-shadow: rgb(0 0 0 / 50%) 0px 0px 18px 0px;
+    padding: 10px;
+    font-size: 14px;
+    width: 100px;
+    opacity: 0; // to make it only show up on hover
+`;
+
+const SignOut = styled.div`
+    position: relative;
+    height: 48 px;
+    width: 48px;
+    display: flex;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+
+    ${UserImg} {
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+    }
+
+    &:hover {
+        ${DropDown} {
+            opacity: 1;
+            transition-duration: 1s;
+
+        }
+    }
+`;
 
 
 export default Header;
