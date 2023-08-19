@@ -1,5 +1,7 @@
 Project created with Firebase, Styled Components, and Redux.
 
+Live deployment of site on [Netlify](https://splendorous-jalebi-82d5f3.netlify.app/).
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
