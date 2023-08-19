@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Link } from 'react-router-dom';
-import { UseSelector, useSelector } from 'react-redux/es/hooks/useSelector';
+import { useSelector } from 'react-redux';
 import { selectNewDisney } from '../features/movie/movieSlice';
 
 const NewDisney = (props) => {
@@ -27,7 +27,7 @@ const movies = useSelector(selectNewDisney);
     )
 }
 
-const Container = styled.main`
+const Container = styled.div`
     padding: 0 0 26px;
 `
 
